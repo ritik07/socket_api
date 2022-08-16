@@ -30,7 +30,8 @@ socketClient.on('connect', function () {
   socketClient.emit('room', prjName);
 });
 socketClient.on('Liverate', function (data) {
-  console.log(data);
+  console.log("data", data)
+  io.sockets.emit('Liverate', data)
 });
 
 // Define/initialize our global vars
