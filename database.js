@@ -6,7 +6,7 @@ const pool = createPool({
   user: "TEST_ROGER",
   password: "roger1234",
   database: "ROGER_DB",
-  connectionLimit: 150,
+  // connectionLimit: 1000000000,
 });
 
 module.exports = pool;
