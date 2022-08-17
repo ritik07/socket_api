@@ -1,14 +1,8 @@
-const port = 3001
 const pool = require("./database");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
-app.get('/', (req, res) => res.send('Hello World!'))
-const serverServe = app.listen(port, () => console.log(`Example app listening on port ${port}!`)).keepAliveTimeout = 61 * 1000;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-const io = require('socket.io')(serverServe);
-
+const io = require('socket.io')('3001');
 // Let’s make node/socketio listen on port 3000
 // var io = require('socket.io').listen(3001)
 var url = "https://starlineadmin.co.in:10001";
