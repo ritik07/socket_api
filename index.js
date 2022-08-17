@@ -1,22 +1,24 @@
+const port = 3001
 const pool = require("./database");
+const express = require("express");
+const app = express();
+const cors = require("cors");
+
+app.get('/', (req, res) => res.send('Hello World!'))
+const serverServe = app.listen(port, () => console.log(`Example app listening on port ${port}!`)).keepAliveTimeout = 61 * 1000;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+const io = require('socket.io')(serverServe);
+
 // Let’s make node/socketio listen on port 3000
 // var io = require('socket.io').listen(3001)
-const io = require('socket.io')('3001');
-const clientio = require('socket.io-client');
 var url = "https://starlineadmin.co.in:10001";
 var prjName = "surajjewellers";
+app.use(cors());
+
 const socketClient = require("socket.io-client")(url, {
   transports: ['websocket'], secure: true, reconnection: true, rejectUnauthorized: false
 }
 );
-var ns_news = clientio.connect(url, {
-  transports: ['websocket']
-}
-);
-
-var socket = ns_news.socket
-
-// const socket = ioc.connect('wss://starlineadmin.co.in:10001/socket.io/');
 
 socketClient.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);
