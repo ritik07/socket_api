@@ -2,7 +2,8 @@ const pool = require("./database");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const io = require('socket.io')('3001');
+const server = app.listen(process.env.PORT || 3001)
+const io = require('socket.io')(server);
 // Let’s make node/socketio listen on port 3000
 // var io = require('socket.io').listen(3001)
 var url = "https://starlineadmin.co.in:10001";
