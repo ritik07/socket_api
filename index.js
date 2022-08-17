@@ -26,7 +26,7 @@ socketClient.on('connect', function () {
   socketClient.emit('room', prjName);
 });
 socketClient.on('Liverate', function (data) {
-  console.log("data", data)
+  console.log("data", "workinggg")
   io.sockets.emit('Liverate', data)
 });
 
