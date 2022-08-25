@@ -5,6 +5,7 @@ const cors = require("cors");
 const server = app.listen(process.env.PORT || 3001)
 const io = require('socket.io')(server);
 const bank = require('./query/bank/bank')
+const contact = require('./query/contact/contact')
 const bodyParser = require('body-parser');
 
 // Let’s make node/socketio listen on port 3000
@@ -28,6 +29,7 @@ app.use(function (req, res, next) {
 
 //
 app.use(bank)
+app.use(contact)
 
 socketClient.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);

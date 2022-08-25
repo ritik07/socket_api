@@ -5,14 +5,14 @@ const path = require('path');
 const router = express.Router()
 const moment = require('moment')
 
-router.post('/bankdetail', (req, res) => {
+router.post('/contact', (req, res) => {
   let body = req.body;
   const submit = async () => {
 
     if (body.action === "INSERT") {
       pool.query(
-        `INSERT INTO s_bank ( name, accname, accno, bcode, bname ) 
-              VALUES ( '${body.name}', '${body.accname}', '${body.accno}', '${(body.bcode)}','${body.bname}');`,
+        `INSERT INTO contact ( name, cnumber, frim, msg ) 
+              VALUES ( '${body.name}', '${body.cnumber}', '${body.frim}', '${(body.msg)}');`,
         async function (err, data) {
           if (data && data.affectedRows) {
             return res.status(200).json({
@@ -32,7 +32,7 @@ router.post('/bankdetail', (req, res) => {
       );
     } else if (body.action === "DELETE") {
       pool.query(
-        `DELETE FROM s_bank WHERE id=${body.id};`,
+        `DELETE FROM contact WHERE id=${body.id};`,
         async function (err, data) {
           if (data && data.affectedRows) {
             // res.send(req.files)
@@ -58,12 +58,12 @@ router.post('/bankdetail', (req, res) => {
   res.status(400).send({ error: error.message })
 })
 
-router.get('/bankdetail', (req, res) => {
+router.get('/contact', (req, res) => {
   let body = req.body;
   const submit = async () => {
     let sSQL;
     // let sSQL = `SELECT name, userid, k_user_bill.id, SUM(k_user_bill.debit)as totaldbt, SUM(k_user_bill.credit) as totalcrdt, (SUM(k_user_bill.credit)-SUM(k_user_bill.debit)) AS netamt FROM k_user_bill INNER JOIN k_user ON k_user.id = k_user_bill.userid GROUP BY k_user.id`;
-    sSQL = `SELECT *  FROM s_bank`;
+    sSQL = `SELECT *  FROM contact`;
     pool.query(
       sSQL,
       async function (err, data) {
