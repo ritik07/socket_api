@@ -4,16 +4,30 @@ const app = express();
 const cors = require("cors");
 const server = app.listen(process.env.PORT || 3001)
 const io = require('socket.io')(server);
+const bank = require('./query/bank/bank')
+const bodyParser = require('body-parser');
+
 // Let’s make node/socketio listen on port 3000
 // var io = require('socket.io').listen(3001)
 var url = "https://starlineadmin.co.in:10001";
 var prjName = "surajjewellers";
 app.use(cors());
-
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json());
 const socketClient = require("socket.io-client")(url, {
   transports: ['websocket'], secure: true, reconnection: true, rejectUnauthorized: false
-}
-);
+});
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
+//
+app.use(bank)
 
 socketClient.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);
@@ -27,8 +41,7 @@ socketClient.on('connect', function () {
   socketClient.emit('room', prjName);
 });
 socketClient.on('Liverate', function (data) {
-  console.log("data", "workinggg")
-  io.sockets.emit('update note', notes)
+  // console.log("data", "workinggg")
   io.sockets.emit('Liverate', data)
 });
 
@@ -40,6 +53,7 @@ var isInitNotes = false
 var socketCount = 0
 
 io.sockets.on('connection', function (socket) {
+  // console.log("tesstt server")
   // Socket has connected, increase socket count
   socketCount++
   // Let all sockets know how many are connected
@@ -69,14 +83,22 @@ io.sockets.on('connection', function (socket) {
     pool.query(`DELETE FROM live_stock WHERE id=${id}`)
   })
 
-  socket.on('update note', function (data) {
+  socket.on('trigger event', function (gold, silver) {
+    notes.map((x) => {
+      Object.assign(x, { ...x, defaultgold: gold, defaultsilver: silver })
+    })
+    pool.query(`UPDATE live_stock SET defaultgold=${gold}, defaultsilver = ${silver}`)
+    io.sockets.emit('trigger event', notes)
+  })
+
+  socket.on('new note', function (data) {
     // New note added, push to all sockets and insert into db
     notes.map((x) => {
       if (x.id == data.id) {
         Object.assign(x, data)
       }
     })
-    io.sockets.emit('update note', notes)
+    io.sockets.emit('new note', notes)
     // Use node's db injection format to filter incoming data
     pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active} where id = ${data.id}`)
   })
@@ -99,4 +121,24 @@ io.sockets.on('connection', function (socket) {
     // Initial notes already exist, send out
     socket.emit('initial notes', notes)
   }
+
+  socket.on('instant mcx', function (data) {
+    io.sockets.emit('instant mcx', data)
+  })
+
+  //check if data exist in db if it then skip else insert
+  // socket.on('update mcx', function (mcxData) {
+  //   console.log("mcxData", mcxData)
+  //   for (var i = 0; i < mcxData.length; i++) {
+  //     console.log("running update qry")
+  //     pool.query(`UPDATE live_mcx SET name='${mcxData[i].symbol}', bid=${mcxData[i].Bid}, ask=${mcxData[i].Ask}, high=${mcxData[i].High}, low=${mcxData[i].Low} where id='${mcxData[i].symbol}'`, (error, results) => {
+  //       if (error) {
+  //         console.log(error)
+  //         throw error
+  //       } else {
+  //         console.log("Rows " + JSON.stringify(results.rows));
+  //       }
+  //     });
+  //   }
+  // })
 })
