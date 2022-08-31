@@ -57,14 +57,10 @@ var isInitNotes = false
 var socketCount = 0
 
 io.sockets.on('connection', function (socket) {
-  // console.log("tesstt server")
-  // Socket has connected, increase socket count
   socketCount++
-  // Let all sockets know how many are connected
   io.sockets.emit('users connected', socketCount)
 
   socket.on('disconnect', function () {
-    // Decrease the socket count on a disconnect, emit
     socketCount--
     io.sockets.emit('users connected', socketCount)
   })
@@ -87,22 +83,14 @@ io.sockets.on('connection', function (socket) {
     pool.query(`DELETE FROM live_stock WHERE id=${id}`)
   })
 
-  socket.on('trigger event', function (gold, silver) {
-    notes.map((x) => {
-      Object.assign(x, { ...x, defaultgold: gold, defaultsilver: silver })
-    })
-    pool.query(`UPDATE live_stock SET defaultgold=${gold}, defaultsilver = ${silver}`)
-    io.sockets.emit('trigger event', notes)
-  })
-
-  socket.on('new note', function (data) {
+  socket.on('update note', function (data) {
     // New note added, push to all sockets and insert into db
     notes.map((x) => {
       if (x.id == data.id) {
         Object.assign(x, data)
       }
     })
-    io.sockets.emit('new note', notes)
+    io.sockets.emit('update note', notes)
     // Use node's db injection format to filter incoming data
     pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active} where id = ${data.id}`)
   })
@@ -112,8 +100,6 @@ io.sockets.on('connection', function (socket) {
     // Initial app start, run db query
     pool.query('SELECT * FROM live_stock')
       .on('result', function (data) {
-        // console.log("data", data)
-        // Push results onto the notes array
         notes.push(data)
       })
       .on('end', function () {
