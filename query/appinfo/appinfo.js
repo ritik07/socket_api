@@ -11,7 +11,7 @@ router.post('/appinfo', (req, res) => {
 
     if (body.action === "UPDATE") {
       pool.query(
-        `Update appinfo set title='${body.title}', no='${body.no}', address='${body.address}', header='${body.header} where id=1`,
+        `Update appinfo set title='${body.title}', no='${body.no}', address='${body.address}', header='${body.header}' where id=1`,
         async function (err, data) {
           if (data && data.affectedRows) {
             return res.status(200).json({
