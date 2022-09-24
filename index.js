@@ -11,8 +11,15 @@ const bodyParser = require('body-parser');
 
 // Let’s make node/socketio listen on port 3000
 // var io = require('socket.io').listen(3001)
-var url = "https://starlineadmin.co.in:10001";
-var prjName = "surajjewellers";
+
+// phase1
+var url = "http://starlinejewellers.in:10004";
+var prjName = "rkjewellers";
+
+// phase2
+// var url = "https://starlineadmin.co.in:10001";
+// var prjName = "surajjewellers";
+
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -34,7 +41,18 @@ app.use(contact)
 app.use(appinfo)
 
 socketClient.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
+  console.log(`connect_error due to ${err}`);
+});
+
+socketClient.on('connect', function () {
+  socketClient.emit('room', prjName);
+  socketClient.emit('ClientData', prjName);
+  socketClient.emit('Liverateroom', 'Liverate');
+});
+
+socketClient.on("Liverateroom", function (data) {
+  console.log("working")
+  io.sockets.emit('Liverate', JSON.parse(data))
 });
 
 socketClient.on('connect', function () {
@@ -44,9 +62,10 @@ socketClient.on('connect', function () {
 socketClient.on('connect', function () {
   socketClient.emit('room', prjName);
 });
-socketClient.on('Liverate', function (data) {
+
+socketClient.on('Liverateroom', function (data) {
   // console.log("data", "workinggg")
-  io.sockets.emit('Liverate', data)
+  io.sockets.emit('Liverate',  JSON.parse(data))
 });
 
 // Define/initialize our global vars
