@@ -28,6 +28,10 @@ const socketClient = require("socket.io-client")(url, {
   transports: ['websocket'], secure: true, reconnection: true, rejectUnauthorized: false
 });
 
+app.use("/hello", (req, res) => {
+  res.send('hello')
+})
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -65,7 +69,7 @@ socketClient.on('connect', function () {
 
 socketClient.on('Liverateroom', function (data) {
   // console.log("data", "workinggg")
-  io.sockets.emit('Liverate',  JSON.parse(data))
+  io.sockets.emit('Liverate', JSON.parse(data))
 });
 
 // Define/initialize our global vars
