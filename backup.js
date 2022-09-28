@@ -16,10 +16,6 @@ const bodyParser = require('body-parser');
 var url = "http://starlinejewellers.in:10004";
 var prjName = "rkjewellers";
 
-//phase3
-// var url = "http://starlinebullion.in:10001";
-// var prjName = "vggold";
-
 // phase2
 // var url = "https://starlineadmin.co.in:10001";
 // var prjName = "surajjewellers";
@@ -31,10 +27,6 @@ app.use(express.json());
 const socketClient = require("socket.io-client")(url, {
   transports: ['websocket'], secure: true, reconnection: true, rejectUnauthorized: false
 });
-
-app.use("/hello", (req, res) => {
-  res.send('hello')
-})
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -58,9 +50,15 @@ socketClient.on('connect', function () {
   socketClient.emit('Liverateroom', 'Liverate');
 });
 
-socketClient.on("Liverateroom", function (data) {
-  console.log("working")
-  io.sockets.emit('Liverate', JSON.parse(data))
+socketClient.on("ClientData", function (data) {
+  console.log("working",data)
+  try {
+      if (data != "") {
+          objRefrance = JSON.parse(data);
+      }
+  } catch (e) {
+
+  }
 });
 
 socketClient.on('connect', function () {
@@ -71,9 +69,9 @@ socketClient.on('connect', function () {
   socketClient.emit('room', prjName);
 });
 
-socketClient.on('Liverateroom', function (data) {
-  // console.log("data", "workinggg")
-  io.sockets.emit('Liverate', JSON.parse(data))
+socketClient.on('Liverate', function (data) {
+  console.log("data", "workinggg")
+  io.sockets.emit('Liverate', data)
 });
 
 // Define/initialize our global vars
@@ -119,7 +117,7 @@ io.sockets.on('connection', function (socket) {
     })
     io.sockets.emit('update note', notes)
     // Use node's db injection format to filter incoming data
-    pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active}, sellactive=${data.sellactive}, buyactive=${data.buyactive} where id = ${data.id}`)
+    pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active} where id = ${data.id}`)
   })
 
   // Check to see if initial query/notes are set
