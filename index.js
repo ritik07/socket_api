@@ -121,7 +121,7 @@ io.sockets.on('connection', function (socket) {
     })
     io.sockets.emit('update note', notes)
     // Use node's db injection format to filter incoming data
-    pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active}, sellactive=${data.sellactive}, buyactive=${data.buyactive} where id = ${data.id}`)
+    pool.query(`UPDATE live_stock SET buy=${data.buy}, sell=${data.sell}, active=${data.active}, sellactive=${data.sellactive}, buyactive=${data.buyactive}, isfix=${data.isfix} where id = ${data.id}`)
   })
 
   // Check to see if initial query/notes are set
