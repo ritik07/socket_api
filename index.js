@@ -97,8 +97,8 @@ io.sockets.on('connection', function (socket) {
   socket.on('add record', function (data) {
     // Use node's db injection format to filter incoming data
     pool.query(`INSERT INTO live_stock 
-    (name, sell, buy, defaultgold, defaultsilver, src, active) VALUES
-    ('${data.name}', ${data.sell}, ${data.buy}, ${data.defaultgold}, ${data.defaultsilver}, '${data.src}', ${data.active})`, (x, i) => {
+    (name, sell, buy, defaultgold, defaultsilver, src, active, fix, isfix) VALUES
+    ('${data.name}', ${data.sell}, ${data.buy}, ${data.defaultgold}, ${data.defaultsilver}, '${data.src}', ${data.active}), ${false}, ${false}`, (x, i) => {
       data.id = i.insertId
       notes.push(data)
       // New note added, push to all sockets and insert into db
