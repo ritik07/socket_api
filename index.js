@@ -13,12 +13,12 @@ const bodyParser = require('body-parser');
 // var io = require('socket.io').listen(3001)
 
 // phase1
-var url = "http://starlinejewellers.in:10004";
-var prjName = "rkjewellers";
+// var url = "http://starlinejewellers.in:10004";
+// var prjName = "rkjewellers";
 
 //phase3
-// var url = "http://starlinebullion.in:10001";
-// var prjName = "vggold";
+var url = "http://starlinebullion.in:10001";
+var prjName = "vggold";
 
 // phase2
 // var url = "https://starlineadmin.co.in:10001";
